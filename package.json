@@ -1,0 +1,15 @@
+{
+  "name": "solana-proof-ts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.6",
+    "@solana/web3.js": "^1.91.7"
+  }
+}
