@@ -1,4 +1,5 @@
 import { AccountInfo } from "@solana/web3.js";
+import { sha256 } from "@noble/hashes/sha256";
 import {
     CallOptions,
     ChannelCredentials,
@@ -86,3 +87,31 @@ interface AccountDeltaProof {
 }
 
 
+function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
+    if (proof.path.length !== proof.siblings.length) {
+        return false;
+    }
+
+    let currentHash: Hash = leafHash;
+
+    for (let i = 0; i < proof.path.length; i++) {
+        const indexInChunk = proof.path[i];
+        const siblingHashes = proof.siblings[i];
+
+        const hasher = sha256.create();
+
+        for (let j = 0; j < indexInChunk; j++) {
+            hasher.update(siblingHashes[j].toBytes());
+        }
+
+        hasher.update(currentHash.toBytes());
+
+        for (let j = indexInChunk; j < siblingHashes.length; j++) {
+            hasher.update(siblingHashes[j].toBytes());
+        }
+
+        currentHash = new Hash(hasher.digest());
+    }
+
+    return currentHash.toString() === root.toString();
+}

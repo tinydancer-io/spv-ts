@@ -10,6 +10,8 @@
   "description": "",
   "dependencies": {
     "@grpc/grpc-js": "^1.10.6",
-    "@solana/web3.js": "^1.91.7"
+    "@noble/hashes": "^1.4.0",
+    "@solana/web3.js": "^1.91.7",
+    "blake3-js": "^0.0.5"
   }
 }
