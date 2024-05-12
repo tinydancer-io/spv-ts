@@ -1,20 +1,8 @@
+import { blake3, Blake3Opts} from '@noble/hashes/blake3';
 import { AccountInfo } from "@solana/web3.js";
 import { sha256 } from "@noble/hashes/sha256";
-import {
-    CallOptions,
-    ChannelCredentials,
-    Client,
-    ClientDuplexStream,
-    ClientOptions,
-    ClientUnaryCall,
-    handleBidiStreamingCall,
-    handleUnaryCall,
-    makeGenericClientConstructor,
-    Metadata,
-    ServiceError,
-    UntypedServiceImplementation,
-  } from "@grpc/grpc-js";
-  
+import { u32, u8, struct, } from "@solana/buffer-layout";
+import { publicKey, u64, bool, Buffer} from "@solana/buffer-layout-utils";
 class Hash {
     private bytes: Uint8Array;
     private static readonly MAX_BYTES = 32;
@@ -48,15 +36,22 @@ class Hash {
     }
 }
 
+export interface CopyAccount {
+    digest: Uint8Array;
+    slot: number;
+}
 
+// export const CopyAccountLayout = struct([
+   
+// ]);
 
-interface Update {
+export interface Update {
     slot: number;
     root: Hash;
     proof: BankHashProof;
 }
 
-interface BankHashProof {
+export interface BankHashProof {
     proofs: AccountDeltaProof[];
     num_sigs: number;
     account_delta_root: Hash;
@@ -64,24 +59,24 @@ interface BankHashProof {
     blockhash: Hash;
 }
 
-interface Proof {
+export interface Proof {
     path: number[]; // Position in the chunk (between 0 and 15) for each level.
     siblings: Hash[][]; // Sibling hashes at each level.
 }
 
-interface BankHashComponents {
+export interface BankHashComponents {
     parent_bankhash: Hash;
     accounts_delta_hash: Hash;
     num_sigs: number;
     current_blockhash: Hash;
 }
 
-interface Data {
+export interface Data {
     hash: Hash;
     account: AccountInfo<Buffer>;
 }
 
-interface AccountDeltaProof {
+export interface AccountDeltaProof {
     pubkey: string; // Assuming Pubkey is a string type
     dataProof: [Data, Proof];
 }
@@ -114,4 +109,35 @@ function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
     }
 
     return currentHash.toString() === root.toString();
+}
+
+
+
+function hashSolanaAccount(
+    lamports: number,
+    owner: Uint8Array,
+    executable: boolean,
+    rentEpoch: number,
+    data: Uint8Array,
+    pubkey: Uint8Array
+): Hash {
+    if (lamports === 0) {
+        return new Hash(new Uint8Array(32).fill(8));
+    }
+    const hasher = blake3.create({});
+
+    hasher.update(new Uint8Array(new Float64Array([lamports]).buffer));
+    hasher.update(new Uint8Array(new Float64Array([rentEpoch]).buffer));
+    hasher.update(data);
+
+    if (executable) {
+        hasher.update(new Uint8Array([1]));
+    } else {
+        hasher.update(new Uint8Array([0]));
+    }
+    hasher.update(owner);
+    hasher.update(pubkey);
+
+    const hashBytes = new Uint8Array(hasher.digest());
+    return new Hash(hashBytes);
 }
