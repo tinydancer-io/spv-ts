@@ -30,7 +30,7 @@ export async function monitorAndVerifyUpdates<T>(
 ): Promise<void> {
     const client = net.connect({
       port: 5000,
-      host: '145.40.125.153',
+      host: '127.0.0.1' 
     
       // keepAlive: true,
     },function (){
