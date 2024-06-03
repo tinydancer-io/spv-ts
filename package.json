@@ -12,10 +12,10 @@
     "@grpc/grpc-js": "^1.10.6",
     "@noble/hashes": "^1.4.0",
     "@solana/web3.js": "^1.91.7",
-    "blake3-js": "^0.0.5"
+    "blake3-js": "^0.0.5",
+    "borsh": "^2.0.0"
   },
   "devDependencies": {
-    "@coral-xyz/borsh": "^0.30.0",
     "@solana/buffer-layout": "^4.0.1",
     "@solana/buffer-layout-utils": "^0.2.0",
     "@types/bn.js": "^5.1.5"

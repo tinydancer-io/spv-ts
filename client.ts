@@ -15,106 +15,101 @@ import {
 import { AccountInfo, PublicKey } from "@solana/web3.js";
 import net from "net";
 
-import { Schema, serialize, deserialize } from 'borsh';
+import { type Schema, serialize, deserialize } from 'borsh';
 import BN from 'bn.js';
+
+import * as borsh from "borsh";
 
 export interface TinydancerProofClient extends Client {
     
 }
-// Define a class for each struct
+const HashSchema: Schema = {
+  array: {
+    type: "u8",
+    len: 32,
+  },
+};
 
-class Pubkey {
-    constructor(properties: { key: Uint8Array }) {
-        Object.assign(this, properties);
-    }
-}
+const PublicKeySchema: Schema = {
+  array: {
+    type: "u8",
+    len: 32,
+  },
+};
 
-class Data {
-    constructor(properties: { data: Uint8Array }) {
-        Object.assign(this, properties);
-    }
-}
+const AccountInfoSchema: Schema = {
+  struct: {
+    pubkey: PublicKeySchema,
+    lamports: "u64",
+    owner: PublicKeySchema,
+    executable: "bool",
+    rent_epoch: "u64",
+    data: {
+      array: {
+        type: "u8",
+      },
+    },
+    write_version: "u64",
+    slot: "u64",
+  },
+};
 
-class Proof {
-    constructor(properties: { proof: Uint8Array }) {
-        Object.assign(this, properties);
-    }
-}
+const DataSchema: Schema = {
+  struct: {
+    pubkey: PublicKeySchema,
+    hash: HashSchema,
+    account: AccountInfoSchema,
+  },
+};
 
-class AccountDeltaProof {
-    constructor(properties: { pubkey: Pubkey, dataProof: [Data, Proof] }) {
-        Object.assign(this, properties);
-    }
-}
+const ProofSchema: Schema = {
+  struct: {
+    path: {
+      array: {
+        type: "u64",
+      },
+    },
+    siblings: {
+      array: {
+        type: {
+          array: {
+            type: HashSchema,
+          },
+        },
+      },
+    },
+  },
+};
 
-class BankHashProof {
-    constructor(properties: { proofs: AccountDeltaProof[], numSigs: BN, accountDeltaRoot: Uint8Array, parentBankhash: Uint8Array, blockhash: Uint8Array }) {
-        Object.assign(this, properties);
-    }
-}
+const AccountDeltaProofSchema: Schema = {
+  struct: {
+    key: PublicKeySchema,
+    data: DataSchema,
+    proof: ProofSchema,
+  },
+};
 
-class Update {
-    constructor(properties: { slot: BN, root: Uint8Array, proof: BankHashProof }) {
-        Object.assign(this, properties);
-    }
-}
+const BankHashProofSchema: Schema = {
+  struct: {
+    proofs: {
+      array: {
+        type: AccountDeltaProofSchema,
+      },
+    },
+    numSigs: "u64",
+    accountDeltaRoot: HashSchema,
+    parentBankhash: HashSchema,
+    blockhash: HashSchema,
+  },
+};
 
-// Define the schema for each class
-
-const pubkeySchema: Schema = new Map([[Pubkey, {
-    kind: 'struct',
-    fields: [
-        ['key', [32]]
-    ]
-}]]);
-
-const dataSchema: Schema = new Map([[Data, {
-    kind: 'struct',
-    fields: [
-        ['data', ['u8']]
-    ]
-}]]);
-
-const proofSchema: Schema = new Map([[Proof, {
-    kind: 'struct',
-    fields: [
-        ['proof', ['u8']]
-    ]
-}]]);
-
-const accountDeltaProofSchema: Schema = new Map([[AccountDeltaProof, {
-    kind: 'struct',
-    fields: [
-        ['pubkey', Pubkey],
-        ['dataProof', [Data, Proof]]
-    ]
-}]]);
-
-const bankHashProofSchema: Schema = new Map([[BankHashProof, {
-    kind: 'struct',
-    fields: [
-        ['proofs', [AccountDeltaProof]],
-        ['numSigs', 'u64'],
-        ['accountDeltaRoot', [32]],
-        ['parentBankhash', [32]],
-        ['blockhash', [32]]
-    ]
-}]]);
-
-const updateSchema: Schema = new Map([[Update, {
-    kind: 'struct',
-    fields: [
-        ['slot', 'u64'],
-        ['root', [32]],
-        ['proof', BankHashProof]
-    ]
-}]]);
-
-// Combine all schemas into one
-
-const schema: Schema = new Map([...pubkeySchema, ...dataSchema, ...proofSchema, ...accountDeltaProofSchema, ...bankHashProofSchema, ...updateSchema]);
-
-
+const UpdateSchema: Schema = {
+  struct: {
+    slot: "u64",
+    root: HashSchema,
+    proof: BankHashProofSchema,
+  },
+};
 
 
 export async function monitorAndVerifyUpdates<T>(
@@ -130,8 +125,11 @@ export async function monitorAndVerifyUpdates<T>(
       console.log("connected to geyser");
     });
     
-    client.on('data', function(d){
-      console.log("Data: ",d);
-      const update: Update = deserialize(schema, d);
+    client.on('data', function(d: any){
+    // console.log(JSON.stringify(new Uint8Array(d), null, 4)); 
+let data = borsh.deserialize(UpdateSchema, d);
+console.dir(data, { depth: 6 });
+      // console.log("Data: ",new Uint8Array(d));
+      // const update: Update = deserialize(schema,Update as any,d);
     });
 }
