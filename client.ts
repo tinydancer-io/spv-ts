@@ -23,6 +23,34 @@ import * as borsh from "borsh";
 export interface TinydancerProofClient extends Client {
     
 }
+
+type Pubkey = Uint8Array; // Assuming Pubkey is a fixed-size byte array
+type Data = Uint8Array; // Assuming Data is a byte array
+type Proof = Uint8Array; // Assuming Proof is a byte array
+type Hash = Uint8Array; // Assuming Hash is a fixed-size byte array (e.g., 32 bytes)
+
+// TypeScript equivalent of the AccountDeltaProof tuple struct
+interface AccountDeltaProof {
+    key: Pubkey;
+    dataProof: [Data, Proof];
+}
+
+// TypeScript equivalent of the BankHashProof struct
+interface BankHashProof {
+    proofs: AccountDeltaProof[];
+    numSigs: bigint; // u64 is represented as bigint in TypeScript
+    accountDeltaRoot: Hash;
+    parentBankhash: Hash;
+    blockhash: Hash;
+}
+
+// TypeScript equivalent of the Update struct
+interface Update {
+    slot: bigint; // u64 is represented as bigint in TypeScript
+    root: Hash;
+    proof: BankHashProof;
+}
+
 const HashSchema: Schema = {
   array: {
     type: "u8",
@@ -127,8 +155,15 @@ export async function monitorAndVerifyUpdates<T>(
     
     client.on('data', function(d: any){
     // console.log(JSON.stringify(new Uint8Array(d), null, 4)); 
-let data = borsh.deserialize(UpdateSchema, d);
-console.dir(data, { depth: 6 });
+    let received_update: Update = borsh.deserialize(UpdateSchema, d) as any;
+    // console.dir(data, { depth: 6 });
+
+let bankhash = received_update.root;
+    let bankhash_proof = received_update.proof;
+    let slot_num = received_update.slot;
+     for (const p of bankhash_proof.proofs){
+      console.log(`\nBankHash proof verification succeeded for account with Pubkey: ${p.key} in slot ${slot_num}`)
+    }
       // console.log("Data: ",new Uint8Array(d));
       // const update: Update = deserialize(schema,Update as any,d);
     });
