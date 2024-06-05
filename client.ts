@@ -1,55 +1,29 @@
-import {
-    CallOptions,
-    ChannelCredentials,
-    Client,
-    ClientDuplexStream,
-    ClientOptions,
-    ClientUnaryCall,
-    handleBidiStreamingCall,
-    handleUnaryCall,
-    makeGenericClientConstructor,
-    Metadata,
-    ServiceError,
-    UntypedServiceImplementation,
-  } from "@grpc/grpc-js";
-import { AccountInfo, PublicKey } from "@solana/web3.js";
+// import {
+//     CallOptions,
+//     ChannelCredentials,
+//     Client,
+//     ClientDuplexStream,
+//     ClientOptions,
+//     ClientUnaryCall,
+//     handleBidiStreamingCall,
+//     handleUnaryCall,
+//     makeGenericClientConstructor,
+//     Metadata,
+//     ServiceError,
+//     UntypedServiceImplementation,
+//   } from "@grpc/grpc-js";
+// import { AccountInfo, PublicKey } from "@solana/web3.js";
 import net from "net";
-
+import {Proof,Hash,Pubkey,Update,BankHashProof,AccountDeltaProof} from "./utils";
 import { type Schema, serialize, deserialize } from 'borsh';
 import BN from 'bn.js';
 
 import * as borsh from "borsh";
 
-export interface TinydancerProofClient extends Client {
-    
-}
+// export interface TinydancerProofClient extends Client {
+//     
+// }
 
-type Pubkey = Uint8Array; // Assuming Pubkey is a fixed-size byte array
-type Data = Uint8Array; // Assuming Data is a byte array
-type Proof = Uint8Array; // Assuming Proof is a byte array
-type Hash = Uint8Array; // Assuming Hash is a fixed-size byte array (e.g., 32 bytes)
-
-// TypeScript equivalent of the AccountDeltaProof tuple struct
-interface AccountDeltaProof {
-    key: Pubkey;
-    dataProof: [Data, Proof];
-}
-
-// TypeScript equivalent of the BankHashProof struct
-interface BankHashProof {
-    proofs: AccountDeltaProof[];
-    numSigs: bigint; // u64 is represented as bigint in TypeScript
-    accountDeltaRoot: Hash;
-    parentBankhash: Hash;
-    blockhash: Hash;
-}
-
-// TypeScript equivalent of the Update struct
-interface Update {
-    slot: bigint; // u64 is represented as bigint in TypeScript
-    root: Hash;
-    proof: BankHashProof;
-}
 
 const HashSchema: Schema = {
   array: {
