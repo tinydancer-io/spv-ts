@@ -90,7 +90,7 @@ export async function hashSolanaAccount(
 }
 
 export function hashv(hashes: Uint8Array[]): Uint8Array {
-    const hasher = blake3.createHash();
+    const hasher = createHash('sha256');
     for (const hash of hashes) {
         hasher.update(hash);
     }
@@ -158,12 +158,11 @@ export async function verifyLeavesAgainstBankhash(
     if (!Buffer.from(data.hash).equals(Buffer.from(computedAccountHash))) {
         throw new Error("account data does not match account hash");
     }
-    console.warn("Endian: ",runtimeIsLittleEndian());
     
     const computedBankhash = hashv([
         parentBankhash,
         accountDeltaRoot,
-        Buffer.from(numSigs.toString()),
+        new Uint8Array(new BigUint64Array([numSigs]).buffer),
         blockhash
     ]);
 
