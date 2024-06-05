@@ -18,14 +18,12 @@ export interface Data {
     account: AccountInfo;
 }
 
-// TypeScript equivalent of the AccountDeltaProof tuple struct
 export interface AccountDeltaProof {
     key: PubkeyBytes;
     data: Data;
     proof: Proof;
 }
 
-// TypeScript equivalent of the BankHashProof struct
 export interface BankHashProof {
     proofs: AccountDeltaProof[];
     numSigs: bigint; // u64 is represented as bigint in TypeScript
@@ -34,7 +32,6 @@ export interface BankHashProof {
     blockhash: Hash;
 }
 
-// TypeScript equivalent of the Update struct
 export interface Update {
     slot: bigint; // u64 is represented as bigint in TypeScript
     root: Hash;
@@ -98,7 +95,6 @@ export function hashv(hashes: Uint8Array[]): Uint8Array {
 }
 
 export function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
-    // Validate path length and siblings length
     if (proof.path.length !== proof.siblings.length) {
         return false;
     }
@@ -110,16 +106,12 @@ export function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
         const siblingHashes = proof.siblings[i];
         const hasher = createHash('sha256');
 
-        // We need to hash the elements in the correct order.
-        // Before the current hash, add the siblings.
         for (let j = 0; j < indexInChunk; j++) {
             hasher.update(Buffer.from(siblingHashes[j]));
         }
 
-        // Hash the current hash
         hasher.update(Buffer.from(currentHash));
 
-        // After the current hash, add the remaining siblings.
         for (let j = indexInChunk; j < siblingHashes.length; j++) {
             hasher.update(Buffer.from(siblingHashes[j]));
         }
@@ -176,6 +168,3 @@ export async function verifyLeavesAgainstBankhash(
 }
 
 
-function runtimeIsLittleEndian(){
-    return (new Uint8Array(new Uint16Array([1]).buffer)[0] === 1);
-}
