@@ -158,11 +158,12 @@ export async function verifyLeavesAgainstBankhash(
     if (!Buffer.from(data.hash).equals(Buffer.from(computedAccountHash))) {
         throw new Error("account data does not match account hash");
     }
-
+    console.warn("Endian: ",runtimeIsLittleEndian());
+    
     const computedBankhash = hashv([
         parentBankhash,
         accountDeltaRoot,
-        new Uint8Array(new BigUint64Array([numSigs]).buffer),
+        Buffer.from(numSigs.toString()),
         blockhash
     ]);
 
@@ -173,4 +174,9 @@ export async function verifyLeavesAgainstBankhash(
     if (!verifyProof(data.hash, proof, accountDeltaRoot)) {
         throw new Error("account merkle proof verification failure");
     }
+}
+
+
+function runtimeIsLittleEndian(){
+    return (new Uint8Array(new Uint16Array([1]).buffer)[0] === 1);
 }
