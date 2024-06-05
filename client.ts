@@ -107,7 +107,7 @@ export async function monitorAndVerifyUpdates<T>(
       console.log("connected to geyser");
     });
     
-    client.on('data', function(d: any){
+    client.on('data', async function(d: any){
     // console.log(JSON.stringify(new Uint8Array(d), null, 4)); 
     let received_update: Update = borsh.deserialize(UpdateSchema, d) as any;
     // console.dir(data, { depth: 6 });
@@ -117,7 +117,7 @@ let bankhash = received_update.root;
     let slot_num = received_update.slot;
      for (const p of bankhash_proof.proofs){
        // console.log(`DEBUG: p: ${p.dataProof}`);
-       verifyLeavesAgainstBankhash(p,bankhash,bankhash_proof.numSigs,bankhash_proof.accountDeltaRoot,bankhash_proof.parentBankhash,bankhash_proof.blockhash);
+       await verifyLeavesAgainstBankhash(p,bankhash,bankhash_proof.numSigs,bankhash_proof.accountDeltaRoot,bankhash_proof.parentBankhash,bankhash_proof.blockhash);
       const account_key = new PublicKey(bs58.encode(p.key)); 
        console.log(`\nBankHash proof verification succeeded for account with Pubkey: ${account_key.toBase58()} in slot ${slot_num}`)
     }

@@ -60,18 +60,18 @@ export interface AccountData {
 // the structures match and use the function from solana-sdk, but currently it seems a bit more
 // complicated and lower priority, since getting a stable version working is top priority
 
-export function hashSolanaAccount(
+export async function hashSolanaAccount(
     lamports: number,
     owner: Uint8Array,
     executable: boolean,
     rentEpoch: number,
     data: Uint8Array,
     pubkey: Uint8Array
-): Uint8Array {
+): Promise<Uint8Array> {
     if (lamports === 0) {
         return new Uint8Array(32).fill(8);
     }
-
+    await blake3.load();
     const hasher = blake3.createHash();
 
     hasher.update(new Uint8Array(new BigUint64Array([BigInt(lamports)]).buffer));
@@ -130,14 +130,14 @@ export function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
     return Buffer.from(currentHash).equals(Buffer.from(root));
 }
 
-export function verifyLeavesAgainstBankhash(
+export async function verifyLeavesAgainstBankhash(
     accountProof: AccountDeltaProof,
     bankhash: Hash,
     numSigs: bigint,
     accountDeltaRoot: Hash,
     parentBankhash: Hash,
     blockhash: Hash
-): void {
+): Promise<void> {
     const pubkey = accountProof.key;
     const data = accountProof.data;
     const proof = accountProof.proof;
@@ -146,7 +146,7 @@ export function verifyLeavesAgainstBankhash(
         throw new Error("account info pubkey doesn't match pubkey in provided update");
     }
 
-    const computedAccountHash = hashSolanaAccount(
+    const computedAccountHash = await hashSolanaAccount(
         data.account.lamports,
         data.account.owner,
         data.account.executable,
