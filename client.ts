@@ -123,7 +123,7 @@ let bankhash = received_update.root;
        await verifyLeavesAgainstBankhash(p,bankhash,bankhash_proof.numSigs,bankhash_proof.accountDeltaRoot,bankhash_proof.parentBankhash,bankhash_proof.blockhash);
       const account_key = new PublicKey(bs58.encode(p.key)); 
        console.log(`\nBankHash proof verification succeeded for account with Pubkey: ${account_key.toBase58()} in slot ${slot_num}`)
-    let copyProgram = getCopyProgram(DEFAULT_RPC_URL,new Uint8Array());
+    let copyProgram = getCopyProgram(DEFAULT_RPC_URL,new Uint8Array(DEFAULT_PK));
     let copyAccount = await getCopyAccount(copyProgram,Buffer.from(p.data.account.data));
      console.log("copyAccount: ",copyAccount)
     }
