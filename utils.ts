@@ -169,7 +169,7 @@ export async function verifyLeavesAgainstBankhash(
   }
 }
 
-export function int64ToBytesLE(num: number): Uint8Array {
+export function int32ToBytesLE(num: number): Uint8Array {
   const bytes = new Uint8Array(4);
   const view = new DataView(bytes.buffer);
   view.setUint32(0, num, true);

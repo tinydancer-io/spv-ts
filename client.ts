@@ -3,7 +3,7 @@ import {
   Update,
   verifyLeavesAgainstBankhash,
   hashv,
-  int64ToBytesLE,
+  int32ToBytesLE,
 } from "./utils";
 import { type Schema } from "borsh";
 import { AccountInfo, PublicKey, SYSVAR_CLOCK_PUBKEY, SystemProgram } from "@solana/web3.js";
@@ -166,10 +166,10 @@ export async function monitorAndVerifyUpdates(
       console.log("copyAccount: ", bs58.encode(copyAccount["digest"]));
       let rpc_account_hash = hashv([
         rpcPubkey.toBytes(),
-        int64ToBytesLE(rpcAccount.lamports),
+        int32ToBytesLE(rpcAccount.lamports),
         rpcAccount.data,
         rpcAccount.owner.toBytes(),
-        int64ToBytesLE(rpcAccount.rentEpoch!!),
+        int32ToBytesLE(rpcAccount.rentEpoch!!),
       ]);
       console.log(
         `Hash for rpc account matches Hash verified as part of the BankHash: ${bs58.encode(rpc_account_hash)}`,
