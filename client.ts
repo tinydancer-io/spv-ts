@@ -102,8 +102,8 @@ const UpdateSchema: Schema = {
 
 
 export async function monitorAndVerifyUpdates<T>(
-    rpcPubkey: PublicKey,
-    rpcAccount: AccountInfo 
+    // rpcPubkey: PublicKey,
+    // rpcAccount: AccountInfo 
 ): Promise<void> {
     const client = net.connect({
       port: 5000,
