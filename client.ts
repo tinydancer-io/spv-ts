@@ -6,7 +6,7 @@ import {
   int64ToBytesLE,
 } from "./utils";
 import { type Schema } from "borsh";
-import { AccountInfo, PublicKey } from "@solana/web3.js";
+import { AccountInfo, PublicKey, SYSVAR_CLOCK_PUBKEY, SystemProgram } from "@solana/web3.js";
 import * as borsh from "borsh";
 import bs58 from "bs58";
 import { Copy, getCopyAccount, getCopyProgram } from "./program";
@@ -114,14 +114,25 @@ export async function monitorAndVerifyUpdates(
   rpcPubkey: PublicKey,
   rpcAccount: AccountInfo<Buffer>,
   copyProgram: Program<Copy>,
+  bump: number
 ): Promise<void> {
   const client = net.connect(
     {
       port: 5000,
       host: "127.0.0.1",
     },
-    function () {
+    async function () {
       console.log("LOG: Client connected to spv geyser");
+  let txn = await copyProgram.methods.copyHash(bump).accounts({
+    copyAccount: rpcPubkey,
+    sourceAccount: rpcPubkey,
+    clock: SYSVAR_CLOCK_PUBKEY,
+    systemProgram: SystemProgram.programId,
+    creator: copyProgram.provider.publicKey!!
+  }).rpc({
+    commitment: "processed"
+  });
+  console.log("txn_hash:",txn)
     },
   );
 
