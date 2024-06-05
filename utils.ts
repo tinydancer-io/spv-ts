@@ -92,7 +92,7 @@ export async function hashSolanaAccount(
 export function hashv(hashes: Uint8Array[]): Uint8Array {
     const hasher = createHash('sha256');
     for (const hash of hashes) {
-        hasher.update(hash);
+        hasher.update(Buffer.from(hash));
     }
     return hasher.digest();
 }
