@@ -25,6 +25,7 @@
   "devDependencies": {
     "@solana/buffer-layout": "^4.0.1",
     "@solana/buffer-layout-utils": "^0.2.0",
-    "@types/bn.js": "^5.1.5"
+    "@types/bn.js": "^5.1.5",
+    "@types/bs58": "^4.0.4"
   }
 }
