@@ -1,6 +1,6 @@
-import {monitorAndVerifyUpdates} from "./client";
+import { monitorAndVerifyUpdates } from "./client";
 
-async function main(){
-await monitorAndVerifyUpdates();
+async function main() {
+  await monitorAndVerifyUpdates();
 }
 main();

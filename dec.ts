@@ -94,5 +94,5 @@ let buffer = Buffer.from(
   "hex",
 );
 
-let data:any = borsh.deserialize(UpdateSchema, buffer);
+let data: any = borsh.deserialize(UpdateSchema, buffer);
 console.dir(data["proof"]["proofs"][0], { depth: 6 });
