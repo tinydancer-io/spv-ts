@@ -21,7 +21,7 @@ export interface Data {
 // TypeScript equivalent of the AccountDeltaProof tuple struct
 export interface AccountDeltaProof {
     key: PubkeyBytes;
-    dataProof: [Data, Proof];
+    data: [Data, Proof];
 }
 
 // TypeScript equivalent of the BankHashProof struct
@@ -138,8 +138,8 @@ export function verifyLeavesAgainstBankhash(
     blockhash: Hash
 ): void {
     const pubkey = accountProof.key;
-    const data = accountProof.dataProof[0];
-    const proof = accountProof.dataProof[1];
+    const data = accountProof.data[0];
+    const proof = accountProof.data[1];
 
     if (!Buffer.from(data.account.pubkey).equals(Buffer.from(pubkey))) {
         throw new Error("account info pubkey doesn't match pubkey in provided update");
