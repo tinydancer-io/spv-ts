@@ -2,20 +2,19 @@ import net from "net";
 import {
   Update,
   verifyLeavesAgainstBankhash,
-  AccountInfo,
   hashv,
   int64ToBytesLE,
 } from "./utils";
 import { type Schema } from "borsh";
-import { PublicKey } from "@solana/web3.js";
+import { AccountInfo, PublicKey } from "@solana/web3.js";
 import * as borsh from "borsh";
 import bs58 from "bs58";
 import { getCopyAccount, getCopyProgram } from "./program";
 
-const DEFAULT_RPC_URL = "http://localhost:8899";
-const DEFAULT_WS_URL = "ws://localhost:8900";
+export const DEFAULT_RPC_URL = "http://localhost:8899";
+export const DEFAULT_WS_URL = "ws://localhost:8900";
 
-const DEFAULT_PK = [
+export const DEFAULT_PK = [
   45, 207, 31, 93, 231, 214, 161, 227, 225, 230, 236, 108, 50, 104, 185, 205,
   104, 14, 156, 220, 12, 239, 251, 77, 251, 125, 107, 36, 28, 176, 221, 158,
   120, 200, 251, 238, 85, 242, 127, 115, 244, 44, 243, 118, 63, 141, 216, 168,
@@ -110,9 +109,9 @@ const UpdateSchema: Schema = {
   },
 };
 
-export async function monitorAndVerifyUpdates<T>(
+export async function monitorAndVerifyUpdates(
   rpcPubkey: PublicKey,
-  rpcAccount: AccountInfo,
+  rpcAccount: AccountInfo<Buffer>,
 ): Promise<void> {
   const client = net.connect(
     {
@@ -156,8 +155,8 @@ export async function monitorAndVerifyUpdates<T>(
         rpcPubkey.toBytes(),
         int64ToBytesLE(rpcAccount.lamports),
         rpcAccount.data,
-        rpcAccount.owner,
-        int64ToBytesLE(rpcAccount.rent_epoch),
+        rpcAccount.owner.toBytes(),
+        int64ToBytesLE(rpcAccount.rentEpoch!!),
       ]);
       console.log(
         `Hash for rpc account matches Hash verified as part of the BankHash: ${rpc_account_hash}`,
