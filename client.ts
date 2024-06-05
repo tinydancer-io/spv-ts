@@ -112,6 +112,7 @@ const UpdateSchema: Schema = {
 export async function monitorAndVerifyUpdates(
   rpcPubkey: PublicKey,
   rpcAccount: AccountInfo<Buffer>,
+  copyProgram: Program<Copy>,
 ): Promise<void> {
   const client = net.connect(
     {
@@ -142,10 +143,10 @@ export async function monitorAndVerifyUpdates(
       console.log(
         `\nBankHash proof verification succeeded for account with Pubkey: ${account_key.toBase58()} in slot ${slot_num}`,
       );
-      let copyProgram = getCopyProgram(
-        DEFAULT_RPC_URL,
-        new Uint8Array(DEFAULT_PK),
-      );
+      // let copyProgram = getCopyProgram(
+        // DEFAULT_RPC_URL,
+        // new Uint8Array(DEFAULT_PK),
+      // );
       let copyAccount = await getCopyAccount(
         copyProgram,
         Buffer.from(p.data.account.data),
