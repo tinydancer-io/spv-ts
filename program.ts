@@ -7,6 +7,7 @@ export const COPY_PROGRAM_ID = "3R72AjaZj6gCbANm7LrjNwDqpxacxwnnqE7JgegBTY4Z";
 export function getCopyProgram(
   rpcUrl: string,
   privateKey: Uint8Array,
+  program_id?: string
 ): Program<Copy> {
   const key = Keypair.fromSecretKey(privateKey);
   const wallet = new NodeWallet(key);
@@ -15,7 +16,7 @@ export function getCopyProgram(
     commitment: "confirmed",
   });
 
-  return new Program(COPY_IDL, COPY_PROGRAM_ID, provider) as Program<Copy>;
+  return new Program(COPY_IDL, program_id || COPY_PROGRAM_ID, provider) as Program<Copy>;
 }
 
 export async function getCopyAccount(
