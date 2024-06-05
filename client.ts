@@ -159,7 +159,7 @@ export async function monitorAndVerifyUpdates(
         int64ToBytesLE(rpcAccount.rentEpoch!!),
       ]);
       console.log(
-        `Hash for rpc account matches Hash verified as part of the BankHash: ${rpc_account_hash}`,
+        `Hash for rpc account matches Hash verified as part of the BankHash: ${bs58.encode(rpc_account_hash)}`,
       );
       console.log(rpcAccount);
     }
