@@ -5,13 +5,17 @@ import {createHash} from "crypto";
 
 export type PubkeyBytes = Uint8Array;
 
-export type Data = Uint8Array;
-
 export type Hash = Uint8Array;
 
 export interface Proof {
     path: number[];
     siblings: Hash[][];
+}
+
+export interface Data {
+    pubkey: PubkeyBytes;
+    hash: Hash;
+    account: AccountInfo;
 }
 
 // TypeScript equivalent of the AccountDeltaProof tuple struct
@@ -36,7 +40,7 @@ export interface Update {
     proof: BankHashProof;
 }
 
-export interface Account {
+export interface AccountInfo {
     pubkey: Uint8Array;
     lamports: number;
     owner: Uint8Array;
@@ -46,7 +50,7 @@ export interface Account {
 }
 
 export interface AccountData {
-    account: Account;
+    account: AccountInfo;
     hash: Hash;
 }
 // Util helper function to calculate the hash of a Solana account
