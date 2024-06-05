@@ -1,29 +1,9 @@
-// import {
-//     CallOptions,
-//     ChannelCredentials,
-//     Client,
-//     ClientDuplexStream,
-//     ClientOptions,
-//     ClientUnaryCall,
-//     handleBidiStreamingCall,
-//     handleUnaryCall,
-//     makeGenericClientConstructor,
-//     Metadata,
-//     ServiceError,
-//     UntypedServiceImplementation,
-//   } from "@grpc/grpc-js";
-// import { AccountInfo, PublicKey } from "@solana/web3.js";
 import net from "net";
-import {Proof,Hash,Pubkey,Update,BankHashProof,AccountDeltaProof} from "./utils";
-import { type Schema, serialize, deserialize } from 'borsh';
-import BN from 'bn.js';
-
+import {Proof,Hash,PubkeyBytes,Update,BankHashProof,AccountDeltaProof, verifyLeavesAgainstBankhash} from "./utils";
+import { type Schema, serialize, deserialize } from "borsh";
+import { PublicKey} from "@solana/web3.js";
 import * as borsh from "borsh";
-
-// export interface TinydancerProofClient extends Client {
-//     
-// }
-
+import bs58 from "bs58";
 
 const HashSchema: Schema = {
   array: {
@@ -136,7 +116,9 @@ let bankhash = received_update.root;
     let bankhash_proof = received_update.proof;
     let slot_num = received_update.slot;
      for (const p of bankhash_proof.proofs){
-      console.log(`\nBankHash proof verification succeeded for account with Pubkey: ${p.key} in slot ${slot_num}`)
+       verifyLeavesAgainstBankhash(p,bankhash,bankhash_proof.numSigs,bankhash_proof.accountDeltaRoot,bankhash_proof.parentBankhash,bankhash_proof.blockhash);
+      const account_key = new PublicKey(bs58.encode(p.key)); 
+       console.log(`\nBankHash proof verification succeeded for account with Pubkey: ${account_key.toBase58()} in slot ${slot_num}`)
     }
       // console.log("Data: ",new Uint8Array(d));
       // const update: Update = deserialize(schema,Update as any,d);
