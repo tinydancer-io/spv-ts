@@ -113,15 +113,15 @@ export function verifyProof(leafHash: Hash, proof: Proof, root: Hash): boolean {
         // We need to hash the elements in the correct order.
         // Before the current hash, add the siblings.
         for (let j = 0; j < indexInChunk; j++) {
-            hasher.update(siblingHashes[j]);
+            hasher.update(Buffer.from(siblingHashes[j]));
         }
 
         // Hash the current hash
-        hasher.update(currentHash);
+        hasher.update(Buffer.from(currentHash));
 
         // After the current hash, add the remaining siblings.
         for (let j = indexInChunk; j < siblingHashes.length; j++) {
-            hasher.update(siblingHashes[j]);
+            hasher.update(Buffer.from(siblingHashes[j]));
         }
 
         currentHash = hasher.digest();
