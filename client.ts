@@ -9,7 +9,8 @@ import { type Schema } from "borsh";
 import { AccountInfo, PublicKey } from "@solana/web3.js";
 import * as borsh from "borsh";
 import bs58 from "bs58";
-import { getCopyAccount, getCopyProgram } from "./program";
+import { Copy, getCopyAccount, getCopyProgram } from "./program";
+import { Program } from "@project-serum/anchor";
 
 export const DEFAULT_RPC_URL = "http://localhost:8899";
 export const DEFAULT_WS_URL = "ws://localhost:8900";
