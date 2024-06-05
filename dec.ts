@@ -95,4 +95,4 @@ let buffer = Buffer.from(
 );
 
 let data:any = borsh.deserialize(UpdateSchema, buffer);
-console.dir(data["proof"]["proofs"][0].data, { depth: 6 });
+console.dir(data["proof"]["proofs"][0], { depth: 6 });
