@@ -46,7 +46,7 @@ export interface AccountInfo {
     lamports: number;
     owner: Uint8Array;
     executable: boolean;
-    rentEpoch: number;
+    rent_epoch: number;
     data: Uint8Array;
 }
 
@@ -64,7 +64,7 @@ export async function hashSolanaAccount(
     lamports: number,
     owner: Uint8Array,
     executable: boolean,
-    rentEpoch: number,
+    rent_epoch: number,
     data: Uint8Array,
     pubkey: Uint8Array
 ): Promise<Uint8Array> {
@@ -75,7 +75,7 @@ export async function hashSolanaAccount(
     const hasher = blake3.createHash();
 
     hasher.update(new Uint8Array(new BigUint64Array([BigInt(lamports)]).buffer));
-    hasher.update(new Uint8Array(new BigUint64Array([BigInt(rentEpoch)]).buffer));
+    hasher.update(new Uint8Array(new BigUint64Array([BigInt(rent_epoch)]).buffer));
     hasher.update(data);
 
     if (executable) {
@@ -150,7 +150,7 @@ export async function verifyLeavesAgainstBankhash(
         data.account.lamports,
         data.account.owner,
         data.account.executable,
-        data.account.rentEpoch,
+        data.account.rent_epoch,
         data.account.data,
         data.account.pubkey
     );
