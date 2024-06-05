@@ -11,12 +11,22 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.10.6",
     "@noble/hashes": "^1.4.0",
+    "@project-serum/anchor": "^0.26.0",
     "@solana/web3.js": "^1.91.7",
-    "blake3-js": "^0.0.5"
+    "blake3": "^3.0.0",
+    "blake3-js": "^0.0.5",
+    "borsh": "^2.0.0",
+    "bs58": "^5.0.0",
+    "undici": "^6.18.2"
+  },
+  "overrides": {
+    "blake3-wasm": "^3.0.0",
+    "@c4312/blake3-internal": "^3.0.0"
   },
   "devDependencies": {
-    "@coral-xyz/borsh": "^0.30.0",
     "@solana/buffer-layout": "^4.0.1",
-    "@solana/buffer-layout-utils": "^0.2.0"
+    "@solana/buffer-layout-utils": "^0.2.0",
+    "@types/bn.js": "^5.1.5",
+    "@types/bs58": "^4.0.4"
   }
 }
